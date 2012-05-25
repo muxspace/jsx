@@ -30,8 +30,7 @@
 -record(opts, {
     space = 0,
     indent = 0,
-    depth = 0,
-    pre_encode = false
+    depth = 0
 }).
 
 -type opts() :: list().
@@ -59,10 +58,6 @@ parse_opts([{indent, Val}|Rest], Opts) when is_integer(Val), Val > 0 ->
     parse_opts(Rest, Opts#opts{indent = Val});
 parse_opts([indent|Rest], Opts) ->
     parse_opts(Rest, Opts#opts{indent = 1});
-parse_opts([{pre_encode, F}|Rest], Opts=#opts{pre_encode=false}) when is_function(F, 1) ->
-    parse_opts(Rest, Opts#opts{pre_encode=F});
-parse_opts([{pre_encode, _}|_] = Options, Opts) ->
-    erlang:error(badarg, [Options, Opts]);
 parse_opts([_|Rest], Opts) ->
     parse_opts(Rest, Opts);
 parse_opts([], Opts) ->
@@ -320,6 +315,13 @@ pre_encode_to_json_test_() ->
             <<"[{\"key1\":\"value\",\"key2\":3}]">>,
             to_json(
                 [ [{key1, value}, {key2, 3}] ],
+                Opts
+            )
+        )},
+        {"simple integer_key_proplist", ?_assertEqual(
+            <<"[{\"1\":\"value\",\"2\":3}]">>,
+            to_json(
+                [ [{1, value}, {2, 3}] ],
                 Opts
             )
         )},

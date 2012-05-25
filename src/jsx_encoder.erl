@@ -104,7 +104,9 @@ pre_encode(Value, Opts) -> (Opts#opts.pre_encode)(Value).
 
 
 fix_key(Key) when is_atom(Key) -> fix_key(atom_to_binary(Key, utf8));
-fix_key(Key) when is_binary(Key) -> Key.
+fix_key(Key) when is_binary(Key) -> Key;
+fix_key(Key) when is_integer(Key) -> list_to_binary(integer_to_list(Key));
+fix_key(Key) when is_float(Key) -> list_to_binary(float_to_list(Key)).
 
 
 clean_string(Bin, Opts) ->
