@@ -102,9 +102,10 @@ list(Term, Handler, Opts) -> ?error([Term, Handler, Opts]).
 pre_encode(Value, #opts{pre_encode=false}) -> Value;
 pre_encode(Value, Opts) -> (Opts#opts.pre_encode)(Value).
 
-
-fix_key(Key) when is_atom(Key) -> fix_key(atom_to_binary(Key, utf8));
+% ensure support for various key type
 fix_key(Key) when is_binary(Key) -> Key;
+fix_key(Key) when is_atom(Key) -> fix_key(atom_to_binary(Key, utf8));
+fix_key(Key) when is_list(Key) -> list_to_binary(Key);
 fix_key(Key) when is_integer(Key) -> list_to_binary(integer_to_list(Key));
 fix_key(Key) when is_float(Key) -> list_to_binary(float_to_list(Key)).
 
